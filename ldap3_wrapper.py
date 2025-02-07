@@ -5,8 +5,8 @@
 @Time    :   2025/01/14 13:00:39
 @Author  :   Thomas Obarowski 
 @Version :   1.0
-@Contact :   tjobarow@gmail.com
-@License :   MIT License
+@Contact :   tobarowski@siteone.com
+@License :   (C)Copyright 2024-2025, SiteOne Landscape Supply
 @Desc    :   None
 '''
 
@@ -97,8 +97,12 @@ class Ldap3Wrapper():
                 self.__ldap_conn: Connection = Connection(server=self.__server, user=self.__bind_username, password=self.__bind_password, authentication=SIMPLE, raise_exceptions=True,auto_range=True)
                 self.__ldap_conn.bind()
                 self._logger.info(f"Successfully created a new connection binding to {self._ldap_server_host}:{self._bind_port}")
+            except LDAPInvalidCredentialsResult:
+                self._logger.exception(f"Invalid credentials (username is {self.__bind_username}) were supplied to ldap3_wrapper! Please provide valid credentials and try again.")
+                raise Exception(f"Invalid credentials (username is {self.__bind_username}) were supplied to ldap3_wrapper! Please provide valid credentials and try again.")
             except Exception as e:
-                self._logger.error(e)
+                self._logger.exception(e)
+                raise e
         else:
             self._logger.error("Ldap3Wrapper.Bind() called, but the LDAP connection is already bound.")
             
